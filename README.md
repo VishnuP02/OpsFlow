@@ -148,13 +148,13 @@ PORT=5001
 ## Screenshots
 
 ### Login Screen
-Screenshots/Login Screen.png
+![Login Screen](./Screenshots/Login%20Screen.png)
 
 ### Light Mode Dashboard
-Screenshots/Light Mode.png
+![Light Mode Dashboard](./Screenshots/Light%20Mode.png)
 
 ### Dark Mode Dashboard
-Screenshots/Dark Mode.png
+![Dark Mode Dashboard](./Screenshots/Dark%20Mode.png)
 
 ---
 
