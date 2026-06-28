@@ -77,7 +77,7 @@ jobs:
       - name: Build server Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./server
+          file: ./server/Dockerfile
           push: false
           tags: opsflow-server:ci
