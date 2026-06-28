@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "./supabaseClient";
 import Auth from "./components/Auth";
@@ -59,27 +59,27 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (session) {
-      fetchProfile();
-      fetchRequests();
+  const fetchRequests = useCallback(async () => {
+    let query = supabase
+      .from("requests")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-      const channel = supabase
-        .channel("requests-live")
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "requests" },
-          () => fetchRequests()
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
+    if (role !== "admin") {
+      query = query.eq("user_id", session.user.id);
     }
-  }, [session, role]);
 
-  const fetchProfile = async () => {
+    const { data, error } = await query;
+
+    if (error) {
+      toast.error("Unable to load requests.");
+      return;
+    }
+
+    setRequests(data || []);
+  }, [role, session]);
+
+  const fetchProfile = useCallback(async () => {
     const { data } = await supabase
       .from("profiles")
       .select("role")
@@ -98,27 +98,27 @@ function App() {
       ]);
       setRole("user");
     }
-  };
+  }, [session]);
 
-  const fetchRequests = async () => {
-    let query = supabase
-      .from("requests")
-      .select("*")
-      .order("created_at", { ascending: false });
+  useEffect(() => {
+    if (session) {
+      fetchProfile();
+      fetchRequests();
 
-    if (role !== "admin") {
-      query = query.eq("user_id", session.user.id);
+      const channel = supabase
+        .channel("requests-live")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "requests" },
+          () => fetchRequests()
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
-
-    const { data, error } = await query;
-
-    if (error) {
-      toast.error("Unable to load requests.");
-      return;
-    }
-
-    setRequests(data || []);
-  };
+  }, [session, role, fetchProfile, fetchRequests]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
