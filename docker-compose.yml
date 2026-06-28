@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: opsflow_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-opsflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-opsflow_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-opsflow}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-opsflow}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - opsflow_net
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: opsflow_server
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-opsflow}:${POSTGRES_PASSWORD:-opsflow_secret}@db:5432/${POSTGRES_DB:-opsflow}
+      JWT_SECRET: ${JWT_SECRET:-changeme_in_production}
+      PORT: 5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - opsflow_net
+
+volumes:
+  postgres_data:
+
+networks:
+  opsflow_net:
+    driver: bridge
