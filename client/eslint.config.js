@@ -18,7 +18,7 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
     rules: {
-      'react-hooks/react-compiler': 'off',
+      'react-hooks/set-state-in-effect': 'off',
     },
   },
 ])
