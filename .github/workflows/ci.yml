@@ -49,6 +49,10 @@ jobs:
         working-directory: client
         run: npm run lint
 
+      - name: Run server unit tests
+        working-directory: server
+        run: npm test
+
       - name: Start server and run health check
         working-directory: server
         env:
