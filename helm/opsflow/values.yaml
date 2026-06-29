@@ -1,0 +1,44 @@
+# Default values for OpsFlow Helm chart
+# Override these in production with your own values.yaml
+
+replicaCount: 1
+
+server:
+  image:
+    repository: opsflow-server
+    tag: latest
+    pullPolicy: IfNotPresent
+  port: 5001
+  grpcPort: 50051
+  env:
+    jwtSecret: "changeme_in_production"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+postgres:
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  port: 5432
+  database: opsflow
+  user: opsflow
+  password: "changeme_in_production"
+  storage: 1Gi
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "300m"
+      memory: "256Mi"
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: false

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package opsflow;
+
+option java_package = "com.opsflow.analytics.proto";
+option java_outer_classname = "MetricsProto";
+
+// Workflow metrics service — exposes OpsFlow request statistics via gRPC
+service MetricsService {
+  // Returns a snapshot of current workflow metrics
+  rpc GetMetrics (MetricsRequest) returns (MetricsResponse);
+
+  // Streams live workflow metric updates every 5 seconds
+  rpc StreamMetrics (MetricsRequest) returns (stream MetricsResponse);
+}
+
+message MetricsRequest {
+  string client_id = 1; // identifier for the requesting client
+}
+
+message MetricsResponse {
+  int32 total_requests   = 1;
+  int32 open_requests    = 2;
+  int32 resolved_requests = 3;
+  int32 urgent_requests  = 4;
+  int32 overdue_requests = 5;
+  string timestamp       = 6;
+}

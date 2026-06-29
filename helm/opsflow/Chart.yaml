@@ -1,0 +1,14 @@
+apiVersion: v2
+name: opsflow
+description: Helm chart for deploying OpsFlow enterprise workflow management platform
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - workflow
+  - enterprise
+  - grpc
+  - nodejs
+maintainers:
+  - name: Vishnu Pillai
+    email: VPillai756@wcupa.edu
